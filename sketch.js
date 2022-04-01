@@ -1,10 +1,13 @@
+//imagens
 var backgroundImage, car1_img, car2_img, track;
-var fuelImage, powerCoinImage, lifeImage;
+var fuelImage, powerCoinImage, lifeImage, blastImage;
 var obstacle1Image, obstacle2Image;
-var database, gameState;
-var blastImage;
-var form, player, playerCount;
-var allPlayers, car1, car2, fuels, powerCoins, obstacles;
+//banco de dados
+var database;
+//objetos e controle
+var game, form, player, allPlayers, gameState, playerCount;
+//sprites
+var car1, car2, fuels, powerCoins, obstacles;
 var cars = [];
 
 function preload() {
@@ -23,21 +26,24 @@ function preload() {
 function setup() {
   canvas = createCanvas(windowWidth, windowHeight);
   database = firebase.database();
-  game = new Game();
-  game.getState();
-  game.start();
+  game = new Game();//criando o objeto game
+  game.getState();//carregando o gameState
+  game.start();//criando o start do jogo
 }
 
 function draw() {
   background(backgroundImage);
+  //alterando o gameState para play (1) quando 2 jogadores estiverem logados
   if (playerCount === 2) {
     game.update(1);
   }
 
+  //iniciando o jogo quando o gameState for play (1)
   if (gameState === 1) {
     game.play();
   }
 
+  //finalizando o jogo se o gameState for end (2)
   if (gameState === 2) {
     game.showLeaderboard();
     game.end();

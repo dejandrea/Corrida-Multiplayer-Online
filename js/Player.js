@@ -1,4 +1,5 @@
 class Player {
+  //construindo o jogador
   constructor() {
     this.name = null;
     this.index = null;
@@ -10,6 +11,7 @@ class Player {
     this.score = 0;
   }
 
+  //método que adiciona o novo jogador ao banco de dados.
   addPlayer() {
     var playerIndex = "players/player" + this.index;
 
@@ -28,6 +30,7 @@ class Player {
     });
   }
 
+  //método que consulta as posições dos jogadores no banco de dados e armazena nos atributos do player
   getDistance() {
     var playerDistanceRef = database.ref("players/player" + this.index);
     playerDistanceRef.on("value", data => {
@@ -37,6 +40,7 @@ class Player {
     });
   }
 
+  //método que consulta do playerCount no banco de dados
   getCount() {
     var playerCountRef = database.ref("playerCount");
     playerCountRef.on("value", data => {
@@ -44,12 +48,14 @@ class Player {
     });
   }
 
+  //método que atualiza o playerCount no banco de dados
   updateCount(count) {
     database.ref("/").update({
       playerCount: count
     });
   }
 
+  //método que atualiza os dados do jogador no banco de dados
   update() {
     var playerIndex = "players/player" + this.index;
     database.ref(playerIndex).update({
@@ -61,6 +67,8 @@ class Player {
     });
   }
 
+  //método estático que consulta os dados dos jogadores no banco de dados
+  //pega os dados do banco e armazena em allPlayers
   static getPlayersInfo() {
     var playerInfoRef = database.ref("players");
     playerInfoRef.on("value", data => {
@@ -68,12 +76,14 @@ class Player {
     });
   }
 
+  //método que consulta o rank do jogador no banco e armazena no atributo rank
   getCarsAtEnd() {
     database.ref("carsAtEnd").on("value", data => {
       this.rank = data.val();
     });
   }
 
+  //método estático que atualiza o rank do jogador no banco de dados
   static updateCarsAtEnd(rank) {
     database.ref("/").update({
       carsAtEnd: rank

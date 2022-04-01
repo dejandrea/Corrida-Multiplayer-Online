@@ -7,23 +7,27 @@ class Game {
 
     this.leader1 = createElement("h2");
     this.leader2 = createElement("h2");
-    this.playerMoving = false;
-    this.leftKeyActive = false;
-    this.blast = false;
+
+    this.playerMoving = false; //usado para verificar se o jogador está em movimento e reduzir o combustível
+    this.leftKeyActive = false;//usado para verificar se as setas foram pressionadas e alterar a posição do carro após uma colisão
+    this.blast = false;//usaso para verficar se o carro explodiu e assim para os movimentos do jogo.
   }
 
+  //consulta o estado do jogo no bando de dados
   getState() {
     var gameStateRef = database.ref("gameState");
-    gameStateRef.on("value", function(data) {
+    gameStateRef.on("value", function (data) {
       gameState = data.val();
     });
   }
+  //atualiza o estado do jogo no BD
   update(state) {
     database.ref("/").update({
       gameState: state
     });
   }
 
+  //inicia o jogo, mostra o formulário na tela e cria os sprites
   start() {
     player = new Player();
     playerCount = player.getCount();
@@ -71,7 +75,7 @@ class Game {
     // Adicionar sprite de moeda no jogo
     this.addSprites(powerCoins, 18, powerCoinImage, 0.09);
 
-   //Adicionar sprite de obstáculo no jogo
+    //Adicionar sprite de obstáculo no jogo
     this.addSprites(
       obstacles,
       obstaclesPositions.length,
@@ -81,6 +85,7 @@ class Game {
     );
   }
 
+  //usado para gerar os sprites em posições aleatórias
   addSprites(spriteGroup, numberOfSprites, spriteImage, scale, positions = []) {
     for (var i = 0; i < numberOfSprites; i++) {
       var x, y;
@@ -102,6 +107,7 @@ class Game {
     }
   }
 
+  //configura e posiciona os elementos html após o jogo começar
   handleElements() {
     form.hide();
     form.titleImg.position(40, 50);
@@ -125,6 +131,7 @@ class Game {
     this.leader2.position(width / 3 - 50, 130);
   }
 
+  //gameState play, onde a corrida começa tudo que vai aparecer na tela durante o jogo deve estar aqui
   play() {
     this.handleElements();
     this.handleResetButton();
@@ -139,7 +146,7 @@ class Game {
       this.showLife();
       this.showLeaderboard();
 
-       //índice da matriz
+      //índice da matriz
       var index = 0;
       for (var plr in allPlayers) {
         //adicione 1 ao índice para cada loop
@@ -306,9 +313,10 @@ class Game {
     }
   }
 
+  //coletando os combustíveis
   handleFuel(index) {
     //adicionando combustível
-    cars[index - 1].overlap(fuels, function(collector, collected) {
+    cars[index - 1].overlap(fuels, function (collector, collected) {
       player.fuel = 185;
       //o sprite é coletado no grupo de colecionáveis que desencadeou
       //o evento
@@ -326,8 +334,9 @@ class Game {
     }
   }
 
+  //coletando as moedas
   handlePowerCoins(index) {
-    cars[index - 1].overlap(powerCoins, function(collector, collected) {
+    cars[index - 1].overlap(powerCoins, function (collector, collected) {
       player.score += 21;
       player.update();
       //o sprite é coletado no grupo de colecionáveis que desencadeou
@@ -336,6 +345,7 @@ class Game {
     });
   }
 
+  //verificando colisão dos carros com os obstáculos
   handleObstacleCollision(index) {
     if (cars[index - 1].collide(obstacles)) {
       if (this.leftKeyActive) {
@@ -353,6 +363,7 @@ class Game {
     }
   }
 
+  //verificando colisão entre os carros
   handleCarACollisionWithCarB(index) {
     if (index === 1) {
       if (cars[index - 1].collide(cars[1])) {
@@ -388,6 +399,7 @@ class Game {
     }
   }
 
+  //exibe mensagem de vencedor na tela com o rank
   showRank() {
     swal({
       title: `Incrível!${"\n"}Rank${"\n"}${player.rank}`,
@@ -399,6 +411,7 @@ class Game {
     });
   }
 
+  //mensagem de game over
   gameOver() {
     swal({
       title: `Fim de Jogo`,
@@ -409,7 +422,8 @@ class Game {
       confirmButtonText: "Obrigado por jogar"
     });
   }
-  
+
+  //fim do jogo
   end() {
     console.log("Fim de Jogo");
   }
